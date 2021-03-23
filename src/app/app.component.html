@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="form-row">
+    <div class="col form-group">
+      <label for="noOfFrets">No Of Frets</label>
+      <input type="number" name="noOfFrets" id="noOfFrets" class="form-control" [min]="minNoOfFrets"
+        [max]="maxNoOfFrets" [(ngModel)]="noOfFrets" (ngModelChange)="initFretboard()">
+    </div>
+
+    <div class="col form-group">
+      <label for="noOfStrings">No Of Strings</label>
+      <select name="noOfStrings" id="noOfStrings" class="custom-select" [(ngModel)]="noOfStrings"
+        (ngModelChange)="initFretboard()">
+        <option [ngValue]="6">6</option>
+        <option [ngValue]="4">4</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="showAllNotes" id="showAllNotes"
+        [(ngModel)]="showAllNotes" (ngModelChange)="showAllNotesChanged()">
+      <label class="custom-control-label" for="showAllNotes">Show All Notes</label>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="col form-group">
+      <label for="scale">Scale</label>
+      <select name="scale" id="scale" class="custom-select" [(ngModel)]="selectedScale"
+        (ngModelChange)="selectedBox = undefined">
+        <option [ngValue]="undefined">None</option>
+        <option *ngFor="let scale of scales; let i = index;" [ngValue]="i">{{scale.name}}</option>
+      </select>
+    </div>
+    <div class="col form-group">
+      <label for="rootNote">Root Note</label>
+      <select name="rootNote" id="rootNote" class="custom-select" [(ngModel)]="selectedRootNote">
+        <option [ngValue]="undefined">None</option>
+        <option *ngFor="let note of notes; let i = index;" [ngValue]="i">{{note}}</option>
+      </select>
+    </div>
+    <div class="col form-group">
+      <label for="box">Box</label>
+      <select name="box" id="box" class="custom-select" [(ngModel)]="selectedBox">
+        <option [ngValue]="undefined">None</option>
+        <option *ngFor="let box of selectedScaleBoxes; let i = index;" [ngValue]="i">Box {{i + 1}}</option>
+      </select>
+    </div>
+  </div>
+
+</div>
+
+<div id="fretboard">
+  <div class="string" *ngFor="let string of strings; let stringIndex = index;">
+    <div class="fret-note" *ngFor="let fret of string.frets; let fretIndex = index; "
+      [attr.data-note]="getNoteName(stringIndex, fretIndex)"
+      [ngClass]="{ show: showFretNote(stringIndex, fretIndex), isRoot: isRoot(stringIndex, fretIndex), isBox: isBox(fretIndex) }">
+      <div *ngIf="stringIndex === 0 && fretIndex > 0 && (fretIndex % 12 === 0)" class="double-fretmark"></div>
+    </div>
+  </div>
+</div>
+
+<ul class="notes list-inline text-center">
+  <li class="list-inline-item" *ngFor="let note of notes" (click)="setSelectedNote(note)"
+    [ngClass]="{ selected: selectedNote === note }">
+    {{note}}
+  </li>
+</ul>
+
+<router-outlet></router-outlet>
